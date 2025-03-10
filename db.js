@@ -16,5 +16,17 @@ db.serialize(() => {
 
 console.log("Tabla de contactos verificada/creada");
 
+// Crear la tabla de contactos si no existe
+db.serialize(() => {
+  db.run(`
+      CREATE TABLE IF NOT EXISTS cities (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL
+      )
+  `);
+});
+
+console.log("Tabla de ciudades verificada/creada");
+
 // Cerrar la conexión
 db.close();

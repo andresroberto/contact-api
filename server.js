@@ -28,6 +28,16 @@ app.get("/contacts", (req, res) => {
   });
 });
 
+// Obtener todas los ciudades
+app.get("/cities", (req, res) => {
+  db.all("SELECT * FROM cities", [], (err, rows) => {
+      if (err) {
+          return res.status(500).json({ error: err.message });
+      }
+      res.json(rows);
+  });
+});
+
 // Agregar un nuevo contacto
 app.post("/contacts", (req, res) => {
   const { name, phone } = req.body;
@@ -40,6 +50,22 @@ app.post("/contacts", (req, res) => {
           return res.status(500).json({ error: err.message });
       }
       res.json({ id: this.lastID, name, phone });
+  });
+  stmt.finalize();
+});
+
+// Agregar una nueva ciudad
+app.post("/cities", (req, res) => {
+  const { name } = req.body;
+  if (!name) {
+      return res.status(400).json({ error: "Nombre requerido" });
+  }
+  const stmt = db.prepare("INSERT INTO cities (name) VALUES (?)");
+  stmt.run(name, function (err) {
+      if (err) {
+          return res.status(500).json({ error: err.message });
+      }
+      res.json({ id: this.lastID, name });
   });
   stmt.finalize();
 });
